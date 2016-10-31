@@ -20,7 +20,8 @@
         .hid {display:none}
         .lnbrd {border-color:blue; border-style: none none solid solid; border-width:1px;padding-bottom:6px;padding-left:2px}
         .redc {color:red}
-        .aus {cursor:pointer; }
+        .aus {cursor:pointer; list-style: none;padding-left:4px}
+        .foas {background-color:blue;color:white}
       </style>
       <script>
           function suggestAndAccept() {
@@ -46,6 +47,10 @@
                       inp.value=''
                       flipAS(null)
                  }
+              } else if (evt.which == 38) { // up
+                 moveHiglight(true);
+              } else if (evt.which == 40) { // down
+                 moveHiglight(false);
               } else {
                  fillAutoSuggest(val)
               }       
@@ -115,6 +120,43 @@
                   item.appendChild(document.createTextNode(vars[i].tag));
                   asl.appendChild(item);
                }
+          }
+          function moveHiglight(up) {
+             var asl = document.getElementById('auto_sgst');
+             var se = findSelected(asl);
+             if(!up) {
+                if (se < 0)
+                  select(asl, 0)
+                else {
+                  unselect(asl, se)
+                  select(asl, se+1)
+                }
+             } else {
+                if (se <= 0) {
+                  flipAS()
+                  // TODO clear list
+                } else {
+                   unselect(asl, se)
+                   select(asl, se-1)
+                }
+             }
+          }
+          function findSelected(co) {
+              for(var i=0; i<co.childNodes.length; i++) {
+                  if (co.childNodes[i].nodeName == 'LI' &&  co.childNodes[i].classList.contains('foas'))
+                     return i;
+              }
+              return -1;
+          }
+          function select(co, i) {
+                if (i >= 0 && i < co.childNodes.length && !co.childNodes[i].classList.contains('foas')) {
+                   co.childNodes[i].classList.add('foas');
+                   document.getElementById('tag_inp').value=co.childNodes[i].getAttribute('data')
+               }    
+          }
+          function unselect(co, i) {
+                if (i >= 0 && i < co.childNodes.length && co.childNodes[i].classList.contains('foas'))
+                   co.childNodes[i].classList.remove('foas');
           }
           function deb(s) {
              document.getElementById('test').innerHTML = s
