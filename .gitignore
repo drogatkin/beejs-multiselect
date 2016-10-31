@@ -1,0 +1,5 @@
+lib/
+*.jar
+bin/
+*.class
+*.war
