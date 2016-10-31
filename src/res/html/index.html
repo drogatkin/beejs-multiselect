@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+
+	<title>Tags</title>
+
+	<link href="http://fonts.googleapis.com/css?family=Open+Sans:400" rel="stylesheet">
+	<link href="assets/css/styles.css" rel="stylesheet">
+      <style>
+        .brd {border:1px solid black ; margin-top:2px; margin-bottom:2px; padding:2px}
+        .nonl {display:inline-block}
+        .nobrd {border:0;margin-top:2px }
+        .lftsp {margin-left:6px}
+        .rgtsp {margin-right:6px }
+        .clk {cursor:pointer }
+        .ubrd {border-style: none solid solid solid; border-width:1px}
+        .hid {display:none}
+        .lnbrd {border-color:blue; border-style: none none solid solid; border-width:1px;padding-bottom:6px;padding-left:2px}
+        .redc {color:red}
+        .aus {cursor:pointer; }
+      </style>
+      <script>
+          function suggestAndAccept() {
+            
+          } 
+          function createTag(name) {
+                 var t = document.createElement('template');
+                 t.innerHTML = '<div class="brd nonl rgtsp" data="'+name+'">'+name + '<span class="lftsp clk redc" onclick="removeTag(\''+name+'\')">x</span></div>';
+                 // TODO add custom attr with tag name
+                 return t.content.firstChild;  
+          }
+          function insertTag(tag) {
+              document.getElementById('tags_list').insertBefore(tag, document.getElementById('tag_inp'))
+              //oninput="suggestAndAccept()"
+          }
+          function keyHan(evt,inp) {
+             if (window.event)
+                evt = window.event
+              var val = (inp.value).trim() 
+              if (evt.which == 13 || evt.which == 32) { // 44 59
+                 if (val != '') {
+                      insertTag(createTag(val))
+                      inp.value=''
+                      flipAS(null)
+                 }
+              } else {
+                 fillAutoSuggest(val)
+              }       
+          }
+          function removeTag(name) {
+             var tagsl = document.getElementById('tags_list');
+             for(var i=0; i<tagsl.childNodes.length; i++) {
+                   // alert( tagsl.childNodes[i].tag )
+                   if (tagsl.childNodes[i].nodeName == 'DIV' 
+                     && tagsl.childNodes[i].getAttribute('data') == name) {
+                       tagsl.removeChild(tagsl.childNodes[i]) 
+                       break;
+                   }
+             }  
+          }
+          function flipAS(el, show) {
+             el = document.getElementById('auto_sgst');
+             if (!show) {
+                if (!el.classList.contains('hid'))
+                    el.classList.add('hid')
+             } else
+               if (el.classList.contains('hid'))
+                      el.classList.remove('hid')
+          }
+
+          function getAutoSuggest(val) {
+            var sugs = [{'tag': 'The', 'descr': 'article'},
+                 {'tag': 'quick', 'descr': 'adj'},
+                 {'tag': 'brown', 'descr': 'color'}, 
+                 {'tag': 'fox', 'descr': 'noun'},
+                 {'tag': 'jumps', 'descr': 'verb'}, 
+                 {'tag': 'over', 'descr': 'prep'}, 
+                 {'tag': 'the', 'descr': 'article'}, 
+                 {'tag': 'lazy', 'descr': 'adj'}, 
+                 {'tag': 'dog', 'descr': 'animal'}]
+             var res = [];
+             for(var i=0; i<sugs.length; i++) {
+               if (sugs[i].tag.indexOf(val) >= 0)
+                  res.push(sugs[i])
+             }
+             return res;  
+          }
+          function fillAutoSuggest(val) {
+              flipAS(null, true)
+              deb(val)
+              var asl = document.getElementById('auto_sgst');
+              while (asl.firstChild) {
+                 asl.removeChild(asl.firstChild);
+              }
+              var vars =  getAutoSuggest(val);
+              if (vars.length == 0) {
+                  flipAS();
+                  return
+              }  
+               for(var i = 0; i < vars.length; i++) {
+                  // Create the list item:
+                  var item = document.createElement('li');   // TODO use autosuggest element factory
+                 item.className = 'aus'
+                 item.setAttribute('data', vars[i].tag )
+                  item.title= vars[i].descr
+                  item.onclick = function(e) {
+                     var target = (e.target) ? e.target : e.srcElement;
+                     insertTag(createTag(target.getAttribute('data'))) 
+                     flipAS()
+                     document.getElementById('tag_inp').value=''
+                  }   
+                  item.appendChild(document.createTextNode(vars[i].tag));
+                  asl.appendChild(item);
+               }
+          }
+          function deb(s) {
+             document.getElementById('test').innerHTML = s
+          } 
+     </script>
+</head>
+
+<body>
+  <p>Add tags <span id="test"></span></p>
+<div class="lnbrd" style="width:400px" id="tags_list">
+   <input type="text" class="nonl nobrd" id="tag_inp" onkeyup="keyHan(event,this)">
+</div>
+<div class="ubrd hid" style="width:300px" id="auto_sgst">
+ 
+
+ 
+</div>
+</body>
+</html>

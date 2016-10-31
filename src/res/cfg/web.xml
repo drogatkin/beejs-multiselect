@@ -1,0 +1,42 @@
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	metadata-complete="true">
+
+	<context-param>
+		<param-name>model_datasource</param-name>
+		<param-value>jdbc//beejs-multiselect</param-value>
+	</context-param>
+        <context-param>
+		<param-name>properties</param-name>
+		<param-value>/WEB-INF/config/beejs-multiselect.properties</param-value>
+        </context-param>
+	<listener>
+		<listener-class>rogatkin.test.beejs-multiselect.model.Beejs-multiselectModel</listener-class>
+	</listener>
+	<servlet>
+                <servlet-name>Webbee servlet</servlet-name>
+		<description>Webbee main servlet</description>
+		<servlet-class>com.beegman.webbee.base.WebApp</servlet-class>
+		<!--
+		<init-param>
+			<param-name>properties</param-name>
+			<param-value>/WEB-INF/config/beejs-multiselect.properties</param-value>
+		</init-param>
+		-->
+		<async-supported>true</async-supported>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>beejs-multiselect servlet</servlet-name>
+		<url-pattern>/webbee/*</url-pattern>
+	</servlet-mapping>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+	<resource-ref>
+		<res-ref-name>java:comp/env/jdbc//beejs-multiselect</res-ref-name>
+		<res-type>javax.sql.DataSource</res-type>
+		<res-auth>Container</res-auth>
+	</resource-ref>
+</web-app>
+           
