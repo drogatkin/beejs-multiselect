@@ -1,10 +1,10 @@
-package rogatkin.test.beejs-multiselect.ux;
+package rogatkin.test.beejsmultiselect.ux;
 
 import com.beegman.webbee.block.Systemsetup;
 import com.beegman.webbee.model.Setup;
-import rogatkin.test.beejs-multiselect.model.Beejs-multiselectModel;
+import rogatkin.test.beejsmultiselect.model.BeejsmultiselectModel;
 
-public class Schemainit extends Systemsetup<Setup, Beejs-multiselectModel> {
+public class Schemainit extends Systemsetup<Setup, BeejsmultiselectModel> {
 
 	@Override
 	protected String getDefaultModelPackage() {

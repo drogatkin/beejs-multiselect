@@ -2,7 +2,7 @@
  <!DOCTYPE bee PUBLIC "-//Dmitriy Rogatkin//DTD Bee Project Builder 1.0//EN"
     "https://raw.githubusercontent.com/drogatkin/7Bee/master/bee.dtd" [
       <!ENTITY env SYSTEM "./env.xml">
-      <!ENTITY project "beejs-multiselect">
+      <!ENTITY project "beejs">
       <!ENTITY build_directory "./build">
       <!ENTITY source_directory "src/java">
       <!ENTITY build_file "&project;.jar">

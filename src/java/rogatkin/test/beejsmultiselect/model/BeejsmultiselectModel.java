@@ -1,7 +1,7 @@
 // Webbee (C) 2016 Dmitriy Rogatkin
 ///////   application model class   //////////
 // TODO modify the file for the application purpose
-package rogatkin.test.beejs-multiselect.model;
+package rogatkin.test.beejsmultiselect.model;
 
 import javax.sql.DataSource;
 import org.aldan3.data.DOService;
@@ -11,8 +11,8 @@ import com.beegman.webbee.model.AppModel;
 import com.beegman.webbee.model.Auth;
 import com.beegman.webbee.base.BaseBehavior;
 
-import rogatkin.test.beejs-multiselect.model.util.Beejs-multiselectBehavior;
-public class Beejs-multiselectModel extends AppModel {
+import rogatkin.test.beejsmultiselect.model.util.BeejsmultiselectBehavior;
+public class BeejsmultiselectModel extends AppModel {
 
 	@Override
 	public String getAppName() {
@@ -33,7 +33,7 @@ public class Beejs-multiselectModel extends AppModel {
 
 	@Override
         public BaseBehavior getCommonBehavior() {
-		return new Beejs-multiselectBehavior ();
+		return new BeejsmultiselectBehavior ();
 	}
 
 	@Override

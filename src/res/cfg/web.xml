@@ -12,7 +12,7 @@
 		<param-value>/WEB-INF/config/beejs-multiselect.properties</param-value>
         </context-param>
 	<listener>
-		<listener-class>rogatkin.test.beejs-multiselect.model.Beejs-multiselectModel</listener-class>
+		<listener-class>rogatkin.test.beejsmultiselect.model.BeejsmultiselectModel</listener-class>
 	</listener>
 	<servlet>
                 <servlet-name>Webbee servlet</servlet-name>
