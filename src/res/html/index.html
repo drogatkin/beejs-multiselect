@@ -100,13 +100,14 @@
 		document.getElementById('tags_list').insertBefore(tag,
 				document.getElementById('tag_inp'))
 		//oninput="suggestAndAccept()"
+		document.getElementById('tag_inp').focus()
 	}
 	function keyHan(evt, inp) {
 		if (window.event)
 			evt = window.event
 		var val = (inp.value).trim()
 		if (evt.which == 13 || evt.which == 32) { // 44 59
-			if (val != '') {
+			if (val != '' && !hasTag(val)) {
 				insertTag(createTag(val))
 				inp.value = ''
 				flipAS(null)
@@ -119,16 +120,21 @@
 			fillAutoSuggest(val)
 		}
 	}
-	function removeTag(name) {
+	function removeTag(name) {	    
 		var tagsl = document.getElementById('tags_list');
+		var ta = hasTag(name);
+		if (ta)
+		   tagsl.removeChild(ta)
+	}
+	function hasTag(name) {
+	    var tagsl = document.getElementById('tags_list');
 		for (var i = 0; i < tagsl.childNodes.length; i++) {
-			// alert( tagsl.childNodes[i].tag )
 			if (tagsl.childNodes[i].nodeName == 'DIV'
 					&& tagsl.childNodes[i].getAttribute('data') == name) {
-				tagsl.removeChild(tagsl.childNodes[i])
-				break;
+				return tagsl.childNodes[i]
 			}
 		}
+		return null;
 	}
 	function flipAS(el, show) {
 		el = document.getElementById('auto_sgst');
@@ -186,9 +192,9 @@
 		if (vars.length == 0) {
 			flipAS();
 			return
-
 		}
 		for (var i = 0; i < vars.length; i++) {
+		    // TODO do not add in the list already selected
 			// Create the list item:
 			var item = document.createElement('li'); // TODO use autosuggest element factory
 			item.className = 'aus'
@@ -196,6 +202,8 @@
 			item.title = vars[i].descr
 			item.onclick = function(e) {
 				var target = (e.target) ? e.target : e.srcElement;
+				if (hasTag(target.getAttribute('data')))
+				    return
 				insertTag(createTag(target.getAttribute('data')))
 				flipAS()
 				document.getElementById('tag_inp').value = ''
@@ -210,7 +218,7 @@
 		if (!up) {
 			if (se < 0)
 				select(asl, 0)
-			else {
+			else if (se < asl.childNodes.length-1){
 				unselect(asl, se)
 				select(asl, se + 1)
 			}
@@ -238,12 +246,44 @@
 			co.childNodes[i].classList.add('foas');
 			document.getElementById('tag_inp').value = co.childNodes[i]
 					.getAttribute('data')
+			if (!isScrolledIntoView(co.childNodes[i]))
+			     co.childNodes[i].scrollIntoView(false)
 		}
 	}
 	function unselect(co, i) {
 		if (i >= 0 && i < co.childNodes.length
 				&& co.childNodes[i].classList.contains('foas'))
 			co.childNodes[i].classList.remove('foas');
+	}
+	
+	function isScrolledIntoView(element, percentX, percentY) {
+		var tolerance = 0.01; //needed because the rects returned by getBoundingClientRect provide the position up to 10 decimals
+		if (percentX == null) {
+			percentX = 100;
+		}
+		if (percentY == null) {
+			percentY = 100;
+		}
+
+		var elementRect = element.getBoundingClientRect();
+		var parentRects = [];
+
+		while (element.parentElement != null) {
+			parentRects.push(element.parentElement.getBoundingClientRect());
+			element = element.parentElement;
+		}
+
+		var visibleInAllParents = parentRects.every(function(parentRect) {
+			var visiblePixelX = Math.min(elementRect.right, parentRect.right)
+					- Math.max(elementRect.left, parentRect.left);
+			var visiblePixelY = Math.min(elementRect.bottom, parentRect.bottom)
+					- Math.max(elementRect.top, parentRect.top);
+			var visiblePercentageX = visiblePixelX / elementRect.width * 100;
+			var visiblePercentageY = visiblePixelY / elementRect.height * 100;
+			return visiblePercentageX + tolerance > percentX
+					&& visiblePercentageY + tolerance > percentY;
+		});
+		return visibleInAllParents;
 	}
 	function deb(s) {
 		document.getElementById('test').innerHTML = s
@@ -259,7 +299,7 @@
 		<input type="text" class="nonl nobrd" id="tag_inp"
 			onkeyup="keyHan(event,this)">
 	</div>
-	<div class="ubrd hid" style="width: 300px" id="auto_sgst"></div>
+	<div class="ubrd hid" style="width: 300px;height:100px;overflow:auto" id="auto_sgst"></div>
 	<p>
 	   <a href="javascript:void(0)" onclick="putSelected([{'tag':'expenses'},{'tag':'gift'}])">Put tags</a>
 </body>
