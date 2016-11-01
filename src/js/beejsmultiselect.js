@@ -19,7 +19,7 @@ var MultiSelect = function(settings) {
 		var val = (tag_inp.value).trim()
 		if (evt.which == 13 || evt.which == 32) { // 44 59
 			if (val != '' && !hasTag(val)) {
-				insertTag(that.createTag(val))
+				insertTag(addRemoveHan(that.createTag(val), val))
 				tag_inp.value = ''
 				flipAS(null)
 			}
@@ -32,10 +32,12 @@ var MultiSelect = function(settings) {
 		}
 	}
 	
-	function removeTag(name) {	    
-		var ta = hasTag(name);
-		if (ta)
-			tags_list.removeChild(ta)
+	function removeTag(name) {
+		return function() {
+		    var ta = hasTag(name);
+		    if (ta)
+			   tags_list.removeChild(ta)
+	    }
 	}
 	
 	function hasTag(name) {
@@ -79,7 +81,7 @@ var MultiSelect = function(settings) {
 				if (hasTag(target.getAttribute('data')))
 				    return
 				//insertTag(createTag(target.getAttribute('data')))
-				insertTag(that.createTag(target.getAttribute('data')))
+				insertTag(addRemoveHan(that.createTag(target.getAttribute('data')), target.getAttribute('data')))
 				flipAS()
 				tag_inp.value = ''
 			}
@@ -129,6 +131,11 @@ var MultiSelect = function(settings) {
 				&& co.childNodes[i].classList.contains('foas'))
 			co.childNodes[i].classList.remove('foas');
 	}
+	function addRemoveHan(tag, name) {
+		// TODO get selectro from settings
+		tag.querySelector("div > span").onclick = removeTag(name)
+		return tag;
+	}
 }
 
 MultiSelect.prototype.createTag = 
@@ -136,8 +143,7 @@ function (name) {
 	var t = document.createElement('template');
 	
 	t.innerHTML = '<div class="brd nonl rgtsp" data="'+name+'">' + name
-			+ '<span class="lftsp clk redc" onclick="removeTag(\'' + name
-			+ '\')">x</span></div>';
+			+ '<span class="lftsp clk redc">x</span></div>';
 	// TODO add custom attr with tag name
 	if (this.settings.tagTemplate) {
 		t.innerHTM = this.settings.tagTemplate.replace('{{}}', name)	
