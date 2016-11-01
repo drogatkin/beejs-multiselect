@@ -12,28 +12,38 @@ import com.beegman.webbee.model.Auth;
 import com.beegman.webbee.base.BaseBehavior;
 
 import rogatkin.test.beejsmultiselect.model.util.BeejsmultiselectBehavior;
+
 public class BeejsmultiselectModel extends AppModel {
 
 	@Override
 	public String getAppName() {
 		return "Beejs-multiselect";
 	}
-	
+
 	@Override
 	protected String getServletName() {
 		return "beejs-multiselect servlet";
 	}
- 
+
 	@Override
 	protected DOService createDataService(DataSource datasource) {
 		return new DOService(datasource) {
 
-                };
-        }
+			@Override
+			public String normalizeElementName(String name) {
+				return name.toUpperCase();
+			}
+
+			@Override
+			protected int getInsertUpdateVariant() {
+				return 2;
+			}
+		};
+	}
 
 	@Override
-        public BaseBehavior getCommonBehavior() {
-		return new BeejsmultiselectBehavior ();
+	public BaseBehavior getCommonBehavior() {
+		return new BeejsmultiselectBehavior();
 	}
 
 	@Override

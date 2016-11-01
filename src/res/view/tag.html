@@ -1,0 +1,10 @@
+<div class="form_header">@label.title@</div>
+
+<form name="tag" method="POST">
+<div><div>@label.name@</div>@.ui.field*(name,java.lang.Object^@model@)*@</div>
+<div><div>@label.description@</div>@.ui.field*(description,java.lang.Object^@model@)*@</div>
+
+<hr> 
+@.ui.field*(id,java.lang.Object^@model@)*@
+<input type="submit" name="submit" value="@commonlabels.submit@">
+</form>

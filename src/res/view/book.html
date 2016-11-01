@@ -1,0 +1,68 @@
+<div class="form_header">@label.title@</div>
+<table><tr>
+   <td>
+   <form name="book" method="POST">
+<div><div>@label.name@</div>@.ui.field*(name,java.lang.Object^@model@)*@</div>
+<div><div>@label.author@</div>@.ui.field*(author,java.lang.Object^@model@)*@</div>
+<div><div>@label.written_on@</div>@.ui.field*(written_on,java.lang.Object^@model@)*@</div>
+<div><div>@label.description@</div>@.ui.field*(description,java.lang.Object^@model@)*@</div>
+
+<hr> 
+@.ui.field*(id,java.lang.Object^@model@)*@
+<input type="submit" name="submit" value="@commonlabels.submit@">
+</form>
+   </td>
+   <td>
+   <div class="lnbrd" style="width: 400px" id="tags_list">
+		<input type="text" class="nonl nobrd" id="tag_inp"
+			onkeyup="keyHan(event,this)">
+	</div>
+	<div class="ubrd hid" style="width: 300px;height:100px;overflow:auto" id="auto_sgst"></div>
+	</td></tr></table>
+<script>
+   function initFields() {
+        new MultiSelect({
+        list_name: 'tags_list',
+        input_name:'tag_inp',
+        asuggest_name: 'auto_sgst',
+        getAutoSuggest:getAutoSuggest
+        })
+   }
+   
+   function getAutoSuggest(val) {
+	var sugs = [ {
+		tag : 'The',
+		descr : 'article'
+	}, {
+		tag : 'quick',
+		descr : 'adj'
+	}, {
+		tag : 'brown',
+		descr : 'color'
+	}, {
+		tag : 'fox',
+		descr : 'noun'
+	}, {
+		tag : 'jumps',
+		descr : 'verb'
+	}, {
+		tag : 'over',
+		descr : 'prep'
+	}, {
+		tag : 'the',
+		descr : 'article'
+	}, {
+		tag : 'lazy',
+		descr : 'adj'
+	}, {
+		tag : 'dog',
+		descr : 'animal'
+	} ]
+	var res = [];
+	for (var i = 0; i < sugs.length; i++) {
+		if (sugs[i].tag.indexOf(val) >= 0)
+			res.push(sugs[i])
+	}
+	return res;
+}
+</script>	

@@ -1,0 +1,16 @@
+ <div class="form_header">@label.title@</div>
+
+<table><tr><th>@label.id@</th>
+<th>@label.name@</th>
+<th>@label.description@</th>
+<th>@label.author@</th>
+<th>@label.written_on@</th>
+</tr>
+     @model(<tr>
+<td>@element.get*(ID)*@</td>
+<td><a href="./Book?id=@element.get*(ID)*@">@element.get*(NAME)*@</a></td>
+<td>@element.get*(DESCRIPTION)*@</td>
+<td>@element.get*(AUTHOR)*@</td>
+<td>@element.get*(WRITTEN_ON)*@</td>
+</tr>)@
+    </table>

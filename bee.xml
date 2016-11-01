@@ -2,7 +2,7 @@
  <!DOCTYPE bee PUBLIC "-//Dmitriy Rogatkin//DTD Bee Project Builder 1.0//EN"
     "https://raw.githubusercontent.com/drogatkin/7Bee/master/bee.dtd" [
       <!ENTITY env SYSTEM "./env.xml">
-      <!ENTITY project "beejs">
+      <!ENTITY project "beejsmultiselect">
       <!ENTITY build_directory "./build">
       <!ENTITY source_directory "src/java">
       <!ENTITY build_file "&project;.jar">
@@ -13,7 +13,7 @@
       <!ENTITY org_path "test">
       <!ENTITY wizard SYSTEM "file:C:\projects\Webbee/build/wizard.xml">
       <!ENTITY main_class "&domain;.&org;.&project;.Main">
-      <!ENTITY webapp_file "&project;.war"> 
+      <!ENTITY webapp_file "beejs.war"> 
       <!ENTITY projects_root "">
       ]>
 <!-- 
