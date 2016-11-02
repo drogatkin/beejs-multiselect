@@ -175,16 +175,13 @@ var MultiSelect = function(settings) {
 	}
 }
 
-MultiSelect.prototype.createTag = 
+MultiSelect.prototype.createTag =
+	// TODO customize the function to change selection appearance
 function (name) {
 	var t = document.createElement('template');
-	
-	t.innerHTML = '<div class="brd nonl rgtsp" data="'+name+'">' + name
-			+ '<span class="lftsp clk redc">x</span></div>';
-	// TODO add custom attr with tag name
-	if (this.settings.tagTemplate) {
-		t.innerHTM = this.settings.tagTemplate.replace('{{}}', name)	
-	}
+	t.innerHTML = '<div class="brd nonl rgtsp" data=""><span class="lftsp clk redc">x</span></div>';
+	t.content.firstChild.setAttribute('data', name)
+	t.content.firstChild.insertBefore(document.createTextNode(name), t.content.firstChild.firstChild)
 	return t.content.firstChild;
 }
 
