@@ -32,6 +32,9 @@ public class book extends SimpleCoordinator<BeejsmultiselectModel> {
 	@DBField(size = 4000)
 	@FormField(presentSize = 68, presentRows = 6)
 	public String description;
+	
+	@FormField(presentType = FieldType.Hidden)
+	public String tags;
 
 	@DBField(index=true)
 	@FormField()

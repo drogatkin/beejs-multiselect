@@ -7,6 +7,8 @@ var MultiSelect = function(settings) {
 	this.tag_inp.addEventListener("keyup", keyHan)
 	this.auto_sgst = document.getElementById(settings.asuggest_name)
 	//deb('inp:'+this.tag_inp)
+	this.insertTag = insertTag
+	this.addRemoveHan = addRemoveHan
 
 	function insertTag(tag) {
 		tags_list.insertBefore(tag, tag_inp)
@@ -28,7 +30,10 @@ var MultiSelect = function(settings) {
 		} else if (evt.which == 40) { // down
 			moveHiglight(false);
 		} else {
-			fillAutoSuggest(val)
+			if (settings.callBackAutoSuggest) // && typeof == 'function'
+				settings.callBackAutoSuggest(val, fillASCallback)
+			 else
+				 fillAutoSuggest(val)
 		}
 	}
 	
@@ -37,6 +42,7 @@ var MultiSelect = function(settings) {
 		    var ta = hasTag(name);
 		    if (ta)
 			   tags_list.removeChild(ta)
+			tag_inp.focus()
 	    }
 	}
 	
@@ -58,16 +64,17 @@ var MultiSelect = function(settings) {
 			auto_sgst.classList.remove('hid')
 	}
 	function fillAutoSuggest(val) {
-		flipAS(true)
-		deb(val)
+		if (!settings.getAutoSuggest)
+			return
+		//deb(val)
 		while (auto_sgst.firstChild) {
 			auto_sgst.removeChild(auto_sgst.firstChild);
 		}
 		var vars = settings.getAutoSuggest(val);
 		if (vars.length == 0) {
-			flipAS();
 			return
 		}
+		flipAS(true)
 		for (var i = 0; i < vars.length; i++) {
 		    // TODO do not add in the list already selected
 			// Create the list item:
@@ -77,7 +84,7 @@ var MultiSelect = function(settings) {
 			item.title = vars[i].descr
 			item.onclick = function(e) {
 				var target = (e.target) ? e.target : e.srcElement;
-				deb('clicked')
+				//deb('clicked')
 				if (hasTag(target.getAttribute('data')))
 				    return
 				//insertTag(createTag(target.getAttribute('data')))
@@ -88,6 +95,36 @@ var MultiSelect = function(settings) {
 			item.appendChild(document.createTextNode(vars[i].tag));
 			auto_sgst.appendChild(item);
 		}
+	}
+	function fillASCallback(asv) {
+		while (auto_sgst.firstChild) {
+			auto_sgst.removeChild(auto_sgst.firstChild);
+		}
+		if (asv.length == 0) {
+			flipAS();
+			return
+		}
+		for (var i = 0; i < asv.length; i++) {
+		    // TODO do not add in the list already selected
+			// Create the list item:
+			var item = document.createElement('li'); // TODO use autosuggest element factory
+			item.className = 'aus'
+			item.setAttribute('data', asv[i].tag)
+			item.title = asv[i].descr
+			item.onclick = function(e) {
+				var target = (e.target) ? e.target : e.srcElement;
+				//deb('clicked')
+				if (hasTag(target.getAttribute('data')))
+				    return
+				//insertTag(createTag(target.getAttribute('data')))
+				insertTag(addRemoveHan(that.createTag(target.getAttribute('data')), target.getAttribute('data')))
+				flipAS()
+				tag_inp.value = ''
+			}
+			item.appendChild(document.createTextNode(asv[i].tag));
+			auto_sgst.appendChild(item);
+		}
+		flipAS(true)
 	}
 	function moveHiglight(up) {
 		var se = findSelected(auto_sgst);
@@ -132,7 +169,7 @@ var MultiSelect = function(settings) {
 			co.childNodes[i].classList.remove('foas');
 	}
 	function addRemoveHan(tag, name) {
-		// TODO get selectro from settings
+		// TODO get selector from settings
 		tag.querySelector("div > span").onclick = removeTag(name)
 		return tag;
 	}
@@ -151,35 +188,32 @@ function (name) {
 	return t.content.firstChild;
 }
 
-
-function isScrolledIntoView(element, percentX, percentY) {
-	var tolerance = 0.01; //needed because the rects returned by getBoundingClientRect provide the position up to 10 decimals
-	if (percentX == null) {
-		percentX = 100;
+MultiSelect.prototype. getSelected = function() {
+	var res = []
+	
+	for (var i = 0; i < tags_list.childNodes.length; i++) {
+		if (tags_list.childNodes[i].nodeName == 'DIV'
+				&& tags_list.childNodes[i].getAttribute('data'))
+			res.push(tags_list.childNodes[i].getAttribute('data'))
 	}
-	if (percentY == null) {
-		percentY = 100;
-	}
+	return res
+}
 
+MultiSelect.prototype. putSelected = function(tags) {
+  for (var i = 0; i < tags.length; i++) {
+		this.insertTag(this.addRemoveHan(this.createTag(tags[i].tag), tags[i].tag))
+  }
+}
+
+
+function isScrolledIntoView(element) {
 	var elementRect = element.getBoundingClientRect();
-	var parentRects = [];
-
-	while (element.parentElement != null) {
-		parentRects.push(element.parentElement.getBoundingClientRect());
-		element = element.parentElement;
-	}
-
-	var visibleInAllParents = parentRects.every(function(parentRect) {
-		var visiblePixelX = Math.min(elementRect.right, parentRect.right)
-				- Math.max(elementRect.left, parentRect.left);
-		var visiblePixelY = Math.min(elementRect.bottom, parentRect.bottom)
-				- Math.max(elementRect.top, parentRect.top);
-		var visiblePercentageX = visiblePixelX / elementRect.width * 100;
-		var visiblePercentageY = visiblePixelY / elementRect.height * 100;
-		return visiblePercentageX + tolerance > percentX
-				&& visiblePercentageY + tolerance > percentY;
-	});
-	return visibleInAllParents;
+	var parentRect = element.parentElement?element.parentElement.getBoundingClientRect() :null;
+    if (parentRect) {
+    	//deb('e '+elementRect.top +'-'+parentRect.top+', '+elementRect.bottom+' '+parentRect.bottom)
+    	return elementRect.top < parentRect.bottom && elementRect.bottom >  parentRect.top;
+    }
+	return true;
 }
 function deb(s) {
 	console.log( s )

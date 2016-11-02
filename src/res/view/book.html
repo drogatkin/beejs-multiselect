@@ -1,7 +1,7 @@
 <div class="form_header">@label.title@</div>
 <table><tr>
    <td>
-   <form name="book" method="POST">
+   <form name="book" method="POST" onsubmit="presubmit()">
 <div><div>@label.name@</div>@.ui.field*(name,java.lang.Object^@model@)*@</div>
 <div><div>@label.author@</div>@.ui.field*(author,java.lang.Object^@model@)*@</div>
 <div><div>@label.written_on@</div>@.ui.field*(written_on,java.lang.Object^@model@)*@</div>
@@ -9,25 +9,47 @@
 
 <hr> 
 @.ui.field*(id,java.lang.Object^@model@)*@
+@.ui.field*(tags,java.lang.Object^@model@)*@
 <input type="submit" name="submit" value="@commonlabels.submit@">
 </form>
    </td>
    <td style="vertical-align: top;">
+   @label.tags@
    <div class="lnbrd" style="width: 400px" id="tags_list">
-		<input type="text" class="nonl nobrd" id="tag_inp"
-			onkeyup="keyHan(event,this)">
+		<input type="text" class="nonl nobrd" id="tag_inp">
 	</div>
 	<div class="ubrd hid" style="width: 300px;height:100px;overflow:auto" id="auto_sgst"></div>
 	</td></tr></table>
 <script>
+    var mls1;
    function initFields() {
-        new MultiSelect({
+        mls1 = new MultiSelect({
         list_name: 'tags_list',
         input_name:'tag_inp',
         asuggest_name: 'auto_sgst',
-        getAutoSuggest:getAutoSuggest
+        //getAutoSuggest:getAutoSuggest,
+        callBackAutoSuggest: asyncAS,
+        nocase:true
         })
-   }
+        
+       // mls1.putSelected(document.forms.book.tags.value)
+        //mls1.putSelected(JSON.parse('@.model.tags@'))
+        mls1.putSelected(@.model.tags@)
+    }
+    function presubmit() {
+        var tags = mls1.getSelected() || []
+        if (tags.length > 0) {
+            document.forms.book.tags.value=JSON.stringify(tags)
+        }
+        return true
+    }
+    
+    function asyncAS(val, callback) {
+       makeJSONAjaxCall('./Book/ajax/allTags', 'filter='+val, true, function (vals) {
+           if (vals)
+               callback(vals)
+       }) 
+    }
    
    function getAutoSuggest(val) {
 	var sugs = [ {
