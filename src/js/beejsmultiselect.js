@@ -19,7 +19,8 @@ var MultiSelect = function(settings) {
 		if (window.event)
 			evt = window.event
 		var val = (tag_inp.value).trim()
-		if (evt.which == 13 || evt.which == 32) { // 44 59
+		// TODO make tag separator keys configurable
+		if (evt.which == 13 || evt.which == 32 || evt.which == 188 || evt.which == 59) { // 44 
 			if (val != '' && !hasTag(val)) {
 				insertTag(addRemoveHan(that.createTag(val), val))
 				tag_inp.value = ''
@@ -198,7 +199,8 @@ MultiSelect.prototype. getSelected = function() {
 
 MultiSelect.prototype. putSelected = function(tags) {
   for (var i = 0; i < tags.length; i++) {
-		this.insertTag(this.addRemoveHan(this.createTag(tags[i].tag), tags[i].tag))
+	  var n = tags[i].tag || tags[i][this.settings.tagMap] || tags[i] 
+		this.insertTag(this.addRemoveHan(this.createTag(n), n))
   }
 }
 
