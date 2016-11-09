@@ -53,7 +53,7 @@
 	padding-left: 4px
 }
 
-.foas {
+.foas, .aus:hover {
 	background-color: blue;
 	color: white
 }
