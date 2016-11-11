@@ -456,7 +456,11 @@
          <parameter>A js/</parameter>
          <parameter variable="WEBBEE_3RD_EDITOR_PNG"></parameter>
          <parameter>A js/</parameter>
-         <parameter value="3rdparty/Overthrow/overthrow.js"></parameter>        
+         <parameter value="3rdparty/Overthrow/overthrow.js"></parameter>
+         <parameter>A js/</parameter>
+         <parameter value="3rdparty/JavaScript-autoComplete-master/auto-complete.js"/> 
+         <parameter>A css/</parameter>
+         <parameter value="3rdparty/JavaScript-autoComplete-master/auto-complete.css"/>        
        </function>
     </block>
   </target>
