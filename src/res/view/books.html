@@ -1,4 +1,3 @@
-<div style="float:right"><input name="tag" type="text"><a href="javascript:void(0)" onclick="tagFilter()"><img src="../image/ic_search.png"></a></div>
  <div class="form_header">@label.title@</div>
 
 <table><tr><th>@label.id@</th>
@@ -16,20 +15,23 @@
 </tr>)@
     </table>
 <script>
-    var my_autoComplete = new autoComplete({selector:'input[name="tag"]',source:allTags,minChars:1})
-    
+    //var my_autoComplete = new autoComplete({selector:'input[name="tag"]',source:allTags,minChars:1,onSelect:tagFilter})
+    new MultiSelect({ input_name:'input[name="tag"]',
+        //getAutoSuggest:getAutoSuggest,
+        callBackAutoSuggest: allTags,
+        selectAction:tagFilter})
     function allTags(val, popul) {
-      makeJSONAjaxCall('./Book/ajax/allTags', 'filter='+val, true, function (vals) {
+      makeJSONAjaxCall('./Book/ajax/allTags', 'filter='+encodeURIComponent(val), true, function (vals) {
            if (vals) {
-               vals.forEach(function(va1,i){
-                  vals[i] = va1.tag
-               })
+               //vals.forEach(function(va1,i){
+                 // vals[i] = va1.tag
+               //})
                popul(vals)
            }    
        }) 
     }
     
-    function tagFilter() {
-        window.location='./Books?tag='+document.querySelector('input[name="tag"]').value
+    function tagFilter(val) {
+        window.location='./Books?tag='+encodeURIComponent(val)
     }
 </script>

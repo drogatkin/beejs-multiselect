@@ -31,6 +31,10 @@
 	border-width: 1px
 }
 
+.popu {
+	position: absolute; z-index: 98; height:100px;overflow:auto;background:white
+}
+
 .hid {
 	display: none
 }
@@ -50,7 +54,8 @@
 .aus {
 	cursor: pointer;
 	list-style: none;
-	padding-left: 4px
+	padding-left: 4px;
+	text-overflow: ellipsis;
 }
 
 .foas, .aus:hover {

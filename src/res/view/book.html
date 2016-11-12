@@ -1,4 +1,4 @@
-<div class="form_header">@label.title@</div>
+<div class="form_header">@label.title@</div>@commonlabels.search@
 <table><tr>
    <td>
    <form name="book" method="POST" onsubmit="presubmit()">
@@ -18,15 +18,13 @@
    <div class="lnbrd" style="width: 400px" id="tags_list">
 		<input type="text" class="nonl nobrd" id="tag_inp">
 	</div>
-	<div class="ubrd hid" style="width: 300px;height:100px;overflow:auto" id="auto_sgst"></div>
 	</td></tr></table>
 <script>
     var mls1;
    function initFields() {
         mls1 = new MultiSelect({
-        list_name: 'tags_list',
-        input_name:'tag_inp',
-        asuggest_name: 'auto_sgst',
+        list_name: '#tags_list',
+        input_name:'#tag_inp',
         //getAutoSuggest:getAutoSuggest,
         callBackAutoSuggest: asyncAS,
         nocase:true
@@ -45,7 +43,7 @@
     }
     
     function asyncAS(val, callback) {
-       makeJSONAjaxCall('./Book/ajax/allTags', 'filter='+val, true, function (vals) {
+       makeJSONAjaxCall('./Book/ajax/allTags', 'filter='+encodeURIComponent(val), true, function (vals) {
            if (vals)
                callback(vals)
        }) 

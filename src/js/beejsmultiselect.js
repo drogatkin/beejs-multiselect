@@ -1,14 +1,26 @@
 var MultiSelect = function(settings) {
 	var that = this;
-	this.settings = settings
-	this.tags_list = document.getElementById(settings.list_name)
-	this.tag_inp = document.getElementById(settings.input_name)
+	this.settings = settings;
+	if (settings.list_name) {
+	    this.tags_list = isElement(settings.list_name)?settings.list_name:document.querySelector(settings.list_name);
+	    if (this.tags_list) {
+	    	if (!settings.selectAction)
+	    		settings.selectAction = selectAction;
+	    }
+	}
+	
+	this.tag_inp = isElement(settings.input_name)?settings.input_name:document.querySelector(settings.input_name);
 	//this.tag_inp.onkeyup = keyHan
-	this.tag_inp.addEventListener("keyup", keyHan)
-	this.auto_sgst = document.getElementById(settings.asuggest_name)
-	//deb('inp:'+this.tag_inp)
+	this.tag_inp.addEventListener("keyup", keyHan);
+	this.auto_sgst = createAutosuggestBox(this.tags_list || this.tag_inp); //document.getElementById(settings.asuggest_name)
+	
+	var tag_inp = this.tag_inp
+	var auto_sgst = this.auto_sgst
+	var tags_list = this.tags_list
+	//deb('as:'+this.auto_sgst)
 	this.insertTag = insertTag
 	this.addRemoveHan = addRemoveHan
+	this.disconnect = disconnect
 
 	function insertTag(tag) {
 		tags_list.insertBefore(tag, tag_inp)
@@ -20,12 +32,9 @@ var MultiSelect = function(settings) {
 			evt = window.event
 		var val = (tag_inp.value).trim()
 		// TODO make tag separator keys configurable
-		if (evt.which == 13 || evt.which == 32 || evt.which == 188 || evt.which == 59) { // 44 
-			if (val != '' && !hasTag(val)) {
-				insertTag(addRemoveHan(that.createTag(val), val))
-				tag_inp.value = ''
-				flipAS(null)
-			}
+		if (evt.which == 13 || evt.which == 32 || evt.which == 188 || evt.which == 59) { // 44
+			if (that.settings.selectAction)
+				that.settings.selectAction(val)
 		} else if (evt.which == 38) { // up
 			moveHiglight(true);
 		} else if (evt.which == 40) { // down
@@ -37,7 +46,13 @@ var MultiSelect = function(settings) {
 				 fillAutoSuggest(val)
 		}
 	}
-	
+	function selectAction(val) {
+		if (val != '' && !hasTag(val)) {				
+			insertTag(addRemoveHan(that.createTag(val), val))
+			tag_inp.value = ''
+			flipAS(null)
+		}		
+	}
 	function removeTag(name) {
 		return function() {
 		    var ta = hasTag(name);
@@ -61,10 +76,12 @@ var MultiSelect = function(settings) {
 		if (!show) {
 			if (!auto_sgst.classList.contains('hid'))
 				auto_sgst.classList.add('hid')
-		} else if (auto_sgst.classList.contains('hid'))
+		} else if (auto_sgst.classList.contains('hid')) {
 			auto_sgst.classList.remove('hid')
+			auto_sgst.alignFun()
+		}
 	}
-	function fillAutoSuggest(val) {
+	function fillAutoSuggest(val) {		
 		if (!settings.getAutoSuggest)
 			return
 		//deb(val)
@@ -86,12 +103,9 @@ var MultiSelect = function(settings) {
 			item.onclick = function(e) {
 				var target = (e.target) ? e.target : e.srcElement;
 				//deb('clicked')
-				if (hasTag(target.getAttribute('data')))
-				    return
 				//insertTag(createTag(target.getAttribute('data')))
-				insertTag(addRemoveHan(that.createTag(target.getAttribute('data')), target.getAttribute('data')))
-				flipAS()
-				tag_inp.value = ''
+				if (that.settings.selectAction)
+     				that.settings.selectAction(target.getAttribute('data'))
 			}
 			item.appendChild(document.createTextNode(vars[i].tag));
 			auto_sgst.appendChild(item);
@@ -115,12 +129,8 @@ var MultiSelect = function(settings) {
 			item.onclick = function(e) {
 				var target = (e.target) ? e.target : e.srcElement;
 				//deb('clicked')
-				if (hasTag(target.getAttribute('data')))
-				    return
-				//insertTag(createTag(target.getAttribute('data')))
-				insertTag(addRemoveHan(that.createTag(target.getAttribute('data')), target.getAttribute('data')))
-				flipAS()
-				tag_inp.value = ''
+				if (that.settings.selectAction)
+     				that.settings.selectAction(target.getAttribute('data'))
 			}
 			item.appendChild(document.createTextNode(asv[i].tag));
 			auto_sgst.appendChild(item);
@@ -174,6 +184,40 @@ var MultiSelect = function(settings) {
 		tag.querySelector("div > span").onclick = removeTag(name)
 		return tag;
 	}
+	function isElement(obj) {
+		  try {
+		    //Using W3 DOM2 (works for FF, Opera and Chrom)
+		    return obj instanceof HTMLElement;
+		  }
+		  catch(e){
+		    //Browsers not supporting W3 DOM2 don't have HTMLElement and
+		    //an exception is thrown and we end up here. Testing some
+		    //properties that all elements have. (works on IE7)
+		    return (typeof obj==="object") &&
+		      (obj.nodeType===1) && (typeof obj.style === "object") &&
+		      (typeof obj.ownerDocument ==="object");
+		  }
+    }
+	function createAutosuggestBox(attTo) {
+		var res = document.createElement('div');
+        res.className = 'ubrd popu hid';
+
+        res.alignFun = function(){
+            var rect = attTo.getBoundingClientRect();
+            res.style.left = Math.round(rect.left + (window.pageXOffset || document.documentElement.scrollLeft) + (settings.offsetLeft?settings.offsetLeft:0)) + 'px';
+            res.style.top = Math.round(rect.bottom + (window.pageYOffset || document.documentElement.scrollTop) + (settings.offsetTop?settings.offsetTop:1)) + 'px';
+            res.style.width = Math.round(rect.right - rect.left) + 'px'; // outerWidth
+        }
+        window.addEventListener('resize', res.alignFun)
+        document.body.appendChild(res);
+        return res;
+	}
+	function disconnect() {
+		if (auto_sgst) {
+		   document.body.removeChild(auto_sgst)
+		   window.removeEventListener('resize', auto_sgst.alignFun)
+		}
+	}
 }
 
 MultiSelect.prototype.createTag =
@@ -204,13 +248,12 @@ MultiSelect.prototype. putSelected = function(tags) {
   }
 }
 
-
 function isScrolledIntoView(element) {
 	var elementRect = element.getBoundingClientRect();
 	var parentRect = element.parentElement?element.parentElement.getBoundingClientRect() :null;
     if (parentRect) {
-    	//deb('e '+elementRect.top +'-'+parentRect.top+', '+elementRect.bottom+' '+parentRect.bottom)
-    	return elementRect.top < parentRect.bottom && elementRect.bottom >  parentRect.top;
+    	//deb('e '+elementRect.top +'<'+parentRect.bottom+', '+elementRect.bottom+'> '+parentRect.top)
+    	return elementRect.top + 1 < parentRect.bottom && elementRect.bottom >  parentRect.top;
     }
 	return true;
 }
