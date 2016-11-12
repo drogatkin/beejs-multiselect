@@ -24,10 +24,10 @@ public class Books extends SqlTabular<DataObject,BeejsmultiselectModel> {
 	@Override
 	protected Object applySideEffects(Object modelData) {
 		modelData = super.applySideEffects(modelData);
-		if (modelData instanceof Map && !((Map)modelData).containsKey("search")) {
+		if (modelData instanceof Map && !((Map)modelData).containsKey(SEARCH_BLOCK)) {
 			//HashMap<String, String> search = new HashMap<>(2);
 			//search.put("name", "tag");
-			((Map)modelData).put("search_block", "insert/search.html");
+			((Map)modelData).put(SEARCH_BLOCK, "insert/search.html");
 		}
 		return modelData;
 	}
