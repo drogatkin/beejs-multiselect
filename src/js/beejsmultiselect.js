@@ -19,6 +19,12 @@ var MultiSelect = function(settings) {
 	var tags_list = this.tags_list
 	//deb('as:'+this.auto_sgst)
 	this.insertTag = insertTag
+	tag_inp.onblur = function() {
+	    if (that.settings.selectAction) {
+	        var val = (tag_inp.value).trim()
+	        that.settings.selectAction(val)
+	    }
+	}
 	this.addRemoveHan = addRemoveHan
 	this.disconnect = disconnect
 
@@ -47,7 +53,7 @@ var MultiSelect = function(settings) {
 		}
 	}
 	function selectAction(val) {
-		if (val != '' && !hasTag(val)) {				
+		if (val !== '' && !hasTag(val)) {				
 			insertTag(addRemoveHan(that.createTag(val), val))
 			tag_inp.value = ''
 			flipAS(null)
@@ -89,24 +95,25 @@ var MultiSelect = function(settings) {
 			auto_sgst.removeChild(auto_sgst.firstChild);
 		}
 		var vars = settings.getAutoSuggest(val);
-		if (vars.length == 0) {
+		if (vars.length === 0) {
 			return
 		}
 		flipAS(true)
-		for (var i = 0; i < vars.length; i++) {
-		    // TODO do not add in the list already selected
-			// Create the list item:
-			var item = document.createElement('li'); // TODO use autosuggest element factory
-			item.className = 'aus'
-			item.setAttribute('data', vars[i].tag)
-			item.title = vars[i].descr
-			item.onclick = function(e) {
+		var clicfunc = function(e) {
 				var target = (e.target) ? e.target : e.srcElement;
 				//deb('clicked')
 				//insertTag(createTag(target.getAttribute('data')))
 				if (that.settings.selectAction)
      				that.settings.selectAction(target.getAttribute('data'))
 			}
+		for (var i = 0; i < vars.length; i++) {
+		    // TODO do not add in the list already selected
+			// Create the list item:
+			var item = document.createElement('li'); // TODO use an autosuggest element factory
+			item.className = 'aus'
+			item.setAttribute('data', vars[i].tag)
+			item.title = vars[i].descr
+			item.onclick = clicfunc
 			item.appendChild(document.createTextNode(vars[i].tag));
 			auto_sgst.appendChild(item);
 		}
