@@ -20,7 +20,7 @@ var MultiSelect = function(settings) {
 	//deb('as:'+this.auto_sgst)
 	this.insertTag = insertTag
 	tag_inp.onblur = function() {
-	    if (that.settings.selectAction) {
+	    if (!ASVisible() && that.settings.selectAction) {
 	        var val = (tag_inp.value).trim()
 	        that.settings.selectAction(val)
 	    }
@@ -86,6 +86,9 @@ var MultiSelect = function(settings) {
 			auto_sgst.classList.remove('hid')
 			auto_sgst.alignFun()
 		}
+	}
+	function ASVisible() {
+	    return auto_sgst && !auto_sgst.classList.contains('hid')
 	}
 	function fillAutoSuggest(val) {		
 		if (!settings.getAutoSuggest)
